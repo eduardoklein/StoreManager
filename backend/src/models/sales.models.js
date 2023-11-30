@@ -17,13 +17,14 @@ const findById = async (id) => {
 };
 
 const createSale = async (sales) => {
-  sales.forEach(async (sale) => {
+  const ids = sales.map(async (sale) => {
     const currentDate = getDate();
     const [rows] = await connection.execute('INSERT INTO sales (date) VALUES (?)', [currentDate]);
     await connection.execute('INSERT INTO sales_products (sale_id, product_id, quantity)' 
     + ' VALUES (?, ?, ?)', [rows.insertId, sale.productId, sale.quantity]);
+    return rows.insertId;
   });
-  return 'SUCCESS';
+  return ids;
 };
 
 module.exports = {

@@ -1,12 +1,13 @@
 const route = require('express').Router();
 const salesControllers = require('../controllers/sales.controllers');
+const { saleDoesNotExist } = require('../middlewares/saleDoesNotExist');
 const { productIdExists, 
   quantityExists, 
   quantityGreaterThanZero, 
   doesProductExists, 
 } = require('../middlewares/validateSale');
 
-route.get('/:id', salesControllers.getSalesById);
+route.get('/:id', saleDoesNotExist, salesControllers.getSalesById);
 
 route.get('/', salesControllers.getSales);
 

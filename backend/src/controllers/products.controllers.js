@@ -19,9 +19,9 @@ const createProduct = async (request, response) => {
 };
 
 const editProduct = async (request, response) => {
-  const { name } = request.body;
-  const { id } = request.params;
-  await productsModels.editProduct(name, id);
+  const { name, id } = request.body;
+  const { params } = request;
+  await productsModels.editProduct(name, params.id);
   response.status(200).json({ id, name });
 };
 

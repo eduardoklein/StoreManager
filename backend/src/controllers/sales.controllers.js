@@ -2,13 +2,25 @@ const salesModels = require('../models/sales.models');
 
 const getSales = async (request, response) => {
   const result = await salesModels.findAll();
-  response.status(200).json(result);
+  console.log(result);
+  const resultOrganized = result.map((sale) => ({
+    saleId: sale.salesId,
+    date: sale.date,
+    productId: sale.productId,
+    quantity: sale.quantity,
+  }));
+  response.status(200).json(resultOrganized);
 };
 
 const getSalesById = async (request, response) => {
   const { id } = request.params;
   const result = await salesModels.findById(id);
-  response.status(200).json(result);
+  const resultOrganized = result.map((sale) => ({
+    date: sale.date,
+    productId: sale.productId,
+    quantity: sale.quantity,
+  }));
+  response.status(200).json(resultOrganized);
 };
 
 const createSale = async (request, response) => {

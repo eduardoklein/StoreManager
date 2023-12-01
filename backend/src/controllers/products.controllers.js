@@ -8,7 +8,6 @@ const getProducts = async (request, response) => {
 const getProductById = async (request, response) => {
   const { id } = request.params;
   const [result] = await productsModels.findById(id);
-  console.log(result);
   response.status(200).json({ id: result.id, name: result.name });
 };
 
@@ -19,10 +18,11 @@ const createProduct = async (request, response) => {
 };
 
 const editProduct = async (request, response) => {
-  const { name, id } = request.body;
-  const { params } = request;
-  await productsModels.editProduct(name, params.id);
-  response.status(200).json({ id, name });
+  const { name } = request.body;
+  const { id } = request.params;
+  await productsModels.editProduct(name, id);
+  const intId = +id;
+  response.status(200).json({ id: intId, name });
 };
 
 module.exports = {

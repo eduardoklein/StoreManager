@@ -3,6 +3,8 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const { nameHasFiveChars, nameExists } = require('../../../src/middlewares/validateName');
 const { quantityExists, quantityGreaterThanZero } = require('../../../src/middlewares/validateSale');
+const { productDoesNotExist } = require('../../../src/middlewares/productDoesNotExist');
+const connection = require('../../../src/models/connection');
 
 chai.use(sinonChai);
 
@@ -134,5 +136,22 @@ describe('Testando Middlewares', function () {
     quantityGreaterThanZero(request, response, next);
     expect(response.json).to.have.been.calledWith(mockData);
     expect(response.status).to.have.been.calledWith(422);
+  });
+
+  it('Testando productDoesNotExists chama next', async function () {
+    request.params = { id: 1 };
+    request.body = {
+      name: 'Martelo do Batman',
+    };
+
+    const mockData = {
+      id: 1,
+      name: 'Martelo do Batman',
+    };
+
+    sinon.stub(connection, 'execute').resolves([mockData]);
+
+    await productDoesNotExist(request, response, next);
+    expect(next).to.have.been.calledWith();
   });
 }); 

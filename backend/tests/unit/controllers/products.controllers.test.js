@@ -1,14 +1,14 @@
 const chai = require('chai');
-const chaiHttp = require('chai-http');
 const sinon = require('sinon');
-const { expect } = require('chai');
-const { describe, it } = require('mocha');
+const sinonChai = require('sinon-chai');
 const productsModels = require('../../../src/models/products.models');
 const productsController = require('../../../src/controllers/products.controllers');
 
-chai.use(chaiHttp);
+chai.use(sinonChai);
 
-describe('Testando Products', () => {
+const { expect } = chai;
+
+describe('Testando Products', function () {
   const request = {};
   const response = {};
  
@@ -19,15 +19,15 @@ describe('Testando Products', () => {
 
   afterEach(function () { return sinon.restore(); });
 
-  it('Se não existir products retorna um array vazio', async () => {
+  it('Se não existir products retorna um array vazio', async function () {
     const mockData = [];
-    sinon.stub(productsModels, 'findAll').resolves(mockData);
+    sinon.stub(productsModels, 'findAll').resolves([]);
     await productsController.getProducts(request, response);
-    expect(response.json.calledWith(mockData)).to.be.equal(true);
-    expect(response.status.calledWith(200)).to.be.equal(true);
+    expect(response.json).to.have.been.calledWith(mockData);
+    expect(response.status).to.have.been.calledWith(200);
   });
 
-  it('Testa o retorno do GET quando existem products no DB', async () => {
+  it('Testa o retorno do GET quando existem products no DB', async function () {
     const mockData = [
       {
         id: 1,
@@ -44,24 +44,23 @@ describe('Testando Products', () => {
     ];
     sinon.stub(productsModels, 'findAll').resolves(mockData);
     await productsController.getProducts(request, response);
-    console.log(response.json.args);
-    expect(response.json.calledWith(mockData)).to.be.equal(true);
-    expect(response.status.calledWith(200)).to.be.equal(true);
+    expect(response.json).to.have.been.calledWith(mockData);
+    expect(response.status).to.have.been.calledWith(200);
   });
 
-  // it('Testa o retorno do GET/:id', async () => {
-  //   request.params = { id: 1 };
-  //   const mockData = {
-  //     id: 1,
-  //     name: 'Martelo de Thor',
-  //   };
-  //   sinon.stub(productsModels, 'findById').resolves(mockData);
-  //   await productsController.getProductById(request, response);
-  //   expect(response.json.calledWithExactly(mockData)).to.be.equal(true);
-  //   expect(response.status.calledWithExactly(200)).to.be.equal(true);
-  // });
+  it('Testa o retorno do GET/:id', async function () {
+    request.params = { id: 1 };
+    const mockData = {
+      id: 1,
+      name: 'Martelo de Thor',
+    };
+    sinon.stub(productsModels, 'findById').resolves([mockData]);
+    await productsController.getProductById(request, response);
+    expect(response.json).to.have.been.calledWith(mockData);
+    expect(response.status).to.have.been.calledWith(200);
+  });
 
-  it('Testa o retorno do POST', async () => {
+  it('Testa o retorno do POST', async function () {
     request.body = {
       name: 'ProdutoX',
     };
@@ -69,12 +68,13 @@ describe('Testando Products', () => {
       id: 4,
       name: 'ProdutoX',
     };
-    sinon.stub(productsModels, 'createProduct').resolves(mockData);
+    sinon.stub(productsModels, 'createProduct').resolves(4);
     await productsController.createProduct(request, response);
-    expect(response.status.calledWith(201)).to.be.equal(true);
+    expect(response.json).to.have.been.calledWith(mockData);
+    expect(response.status).to.have.been.calledWith(201);
   });
 
-  it('Testa o retorno do PUT', async () => {
+  it('Testa o retorno do PUT', async function () {
     request.params = { id: 1 };
     request.body = {
       name: 'Martelo do Batman',
@@ -86,7 +86,7 @@ describe('Testando Products', () => {
 
     sinon.stub(productsModels, 'editProduct').resolves(mockData);
     await productsController.editProduct(request, response);
-    expect(response.json.calledWith(mockData)).to.be.equal(true);
-    expect(response.status.calledWith(200)).to.be.equal(true);
+    expect(response.json).to.have.been.calledWith(mockData);
+    expect(response.status).to.have.been.calledWith(200);
   });
 });

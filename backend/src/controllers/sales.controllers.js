@@ -26,7 +26,6 @@ const getSalesById = async (request, response) => {
 const createSale = async (request, response) => {
   const sale = request.body;
   const result = await salesModels.createSale(sale);
-  console.log(result);
   response.status(201).json({ id: result, itemsSold: sale });
 };
 

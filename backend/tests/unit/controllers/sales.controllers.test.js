@@ -1,14 +1,14 @@
 const chai = require('chai');
-const chaiHttp = require('chai-http');
 const sinon = require('sinon');
-const { expect } = require('chai');
-const { describe, it } = require('mocha');
+const sinonChai = require('sinon-chai');
 const salesModels = require('../../../src/models/sales.models');
 const salesController = require('../../../src/controllers/sales.controllers');
 
-chai.use(chaiHttp);
+chai.use(sinonChai);
 
-describe('Testando Sales', () => {
+const { expect } = chai;
+
+describe('Testando Sales', function () {
   const request = {};
   const response = {};
  
@@ -19,15 +19,15 @@ describe('Testando Sales', () => {
 
   afterEach(function () { return sinon.restore(); });
 
-  it('Se não existir sales retorna um array vazio', async () => {
+  it('Se não existir sales retorna um array vazio', async function () {
     const mockData = [];
-    sinon.stub(salesModels, 'findAll').resolves(mockData);
+    sinon.stub(salesModels, 'findAll').resolves([]);
     await salesController.getSales(request, response);
-    expect(response.json.calledWith(mockData)).to.be.equal(true);
-    expect(response.status.calledWith(200)).to.be.equal(true);
+    expect(response.json).to.have.been.calledWith(mockData);
+    expect(response.status).to.have.been.calledWith(200);
   });
 
-  it('Testa o retorno do GET quando existem sales no DB', async () => {
+  it('Testa o retorno do GET quando existem sales no DB', async function () {
     const mockData = [
       {
         saleId: 1,
@@ -48,7 +48,7 @@ describe('Testando Sales', () => {
     expect(response.status.calledWith(200)).to.be.equal(true);
   });
 
-  it('Testa o retorno do GET/:id', async () => {
+  it('Testa o retorno do GET/:id', async function () {
     request.params = { id: 1 };
     const mockData = [
       {
@@ -64,11 +64,11 @@ describe('Testando Sales', () => {
     ];
     sinon.stub(salesModels, 'findById').resolves(mockData);
     await salesController.getSalesById(request, response);
-    expect(response.json.calledWith(mockData)).to.be.equal(true);
-    expect(response.status.calledWith(200)).to.be.equal(true);
+    expect(response.json).to.have.been.calledWith(mockData);
+    expect(response.status).to.have.been.calledWith(200);
   });
 
-  it('Testa o retorno do POST', async () => {
+  it('Testa o retorno do POST', async function () {
     request.body = [
       {
         productId: 1,
@@ -84,9 +84,9 @@ describe('Testando Sales', () => {
         },
       ],
     };
-    sinon.stub(salesModels, 'createSale').resolves(mockData);
+    sinon.stub(salesModels, 'createSale').resolves(4);
     await salesController.createSale(request, response);
-    // expect(response.json.calledWith(mockData)).to.be.equal(true);
+    expect(response.json).to.have.been.calledWith(mockData);
     expect(response.status.calledWith(201)).to.be.equal(true);
   });
 });
